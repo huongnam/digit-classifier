@@ -2,7 +2,7 @@ import numpy as np
 from tensorflow.keras.layers import Dense, Conv2D, MaxPool2D, Flatten, Dropout, Activation
 from tensorflow.keras.models import Model, Sequential, load_model
 from tensorflow.keras.losses import SparseCategoricalCrossentropy
-from tensorflow.keras.optimizers import Adam
+from tensorflow.keras.optimizers import Adam, SGD
 from tensorflow.keras.metrics import SparseCategoricalAccuracy
 from tensorflow.keras.callbacks import EarlyStopping
 
@@ -14,19 +14,19 @@ class DigitClassifier:
     def build_model(self):
         self.model = Sequential()
         self.model.add(Conv2D(16, (3,3), padding='same',
-                       activation='tanh', input_shape=(28, 28, 1)))
+                       activation='relu', input_shape=(28, 28, 1)))
         self.model.add(MaxPool2D(pool_size=(2, 2), strides=(2, 2)))
 
         self.model.add(Conv2D(32, (3,3), padding='same',
-                       activation='tanh'))
+                       activation='relu'))
         self.model.add(MaxPool2D(pool_size=(2, 2), strides=(2, 2)))
 
         self.model.add(Conv2D(128, (3,3), padding='same',
-                       activation='tanh'))
+                       activation='relu'))
         self.model.add(MaxPool2D(pool_size=(2, 2), strides=(2, 2)))
 
         self.model.add(Conv2D(256, (3,3), padding='same',
-                       activation='tanh'))
+                       activation='relu'))
         self.model.add(MaxPool2D(pool_size=(2, 2), strides=(2, 2)))
 
         self.model.add(Flatten())
@@ -52,7 +52,7 @@ class DigitClassifier:
 
     def train(self, x, y, **kwargs):
         x = x.reshape(-1, 28, 28, 1)
-        es = EarlyStopping(patience=5)
+        es = EarlyStopping(monitor='val_loss', mode='min', verbose=1, patience=50)
         self.model.fit(x, y, validation_split=0.2, batch_size=32, epochs=50, callbacks=[es])
 
     def predict(self, x_test):
