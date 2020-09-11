@@ -30,11 +30,12 @@ class DigitClassifier:
         self.model.add(MaxPool2D(pool_size=(2, 2), strides=(2, 2)))
 
         self.model.add(Flatten())
-        self.model.add(Dense(512))
-        self.model.add(Activation('relu'))
         self.model.add(Dropout(0.25))
-        self.model.add(Dense(10))
-        self.model.add(Activation('softmax'))
+        self.model.add(Dense(512, activation='relu'))
+        self.model.add(Dropout(0.25))
+        self.model.add(Dense(32, activation='relu'))
+        self.model.add(Dropout(0.25))
+        self.model.add(Dense(10, activation='softmax'))
         
         loss = SparseCategoricalCrossentropy()
         optimizer = Adam(0.0001)
